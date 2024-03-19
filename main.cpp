@@ -167,6 +167,9 @@ int main(int argc, char** argv)
         drawPixel(spi, x, y, color);
     }
 
+
+    usleep(150000000); // sleep 15 seconds
+
 #ifdef PIGPIO
     spiClose(spi);
 #endif
