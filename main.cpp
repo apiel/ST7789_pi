@@ -3,9 +3,8 @@
 #endif
 
 #include <cstdio>
-// #include <cstring>
-// #include <string>
 #include <unistd.h>
+#include <cstdlib>
 
 #define PIN_RESET 5
 #define PIN_BACKLIGHT 13
@@ -54,10 +53,37 @@ void writeData(int spi, char data)
     writeData(spi, &data, 1);
 }
 
-// void writeData(int spi, std::string data)
+void writeAddr(int spi, int addr1, int addr2)
+{
+    char data[4];
+    data[0] = (addr1 >> 8) & 0xFF;
+    data[1] = addr1 & 0xFF;
+    data[2] = (addr2 >> 8) & 0xFF;
+    data[3] = addr2 & 0xFF;
+    writeData(spi, data, 4);
+}
+
+// void drawFilledRect(int spi, int x, int y, int w, int h, int color)
 // {
-//     writeData(spi, data.c_str(), data.length());
+//     writeCmd(spi, 0x2A); // set column address
+//     writeAddr(spi, x, x + w - 1);
+//     writeCmd(spi, 0x2B); // set row address
+//     writeAddr(spi, y, y + h - 1);
+
 // }
+
+void drawPixel(int spi, int x, int y, int color)
+{
+    writeCmd(spi, 0x2A); // set column address
+    writeAddr(spi, x, x);
+    writeCmd(spi, 0x2B); // set row address
+    writeAddr(spi, y, y);
+
+    char data[2];
+    data[0] = (color >> 8) & 0xFF;
+    data[1] = color & 0xFF;
+    writeData(spi, data, 2);
+}
 
 int main(int argc, char** argv)
 {
@@ -112,6 +138,14 @@ int main(int argc, char** argv)
 #ifdef PIGPIO
     gpioWrite(PIN_BACKLIGHT, 1);
 #endif
+
+    // draw some random pixel
+    for (int i = 0; i < 100; i++) {
+        int x = rand() % 16;
+        int y = rand() % 16;
+        int color = rand() % 256;
+        drawPixel(spi, x, y, color);
+    }
 
 #ifdef PIGPIO
     spiClose(spi);
