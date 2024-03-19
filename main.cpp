@@ -168,7 +168,9 @@ int main(int argc, char** argv)
     }
 
 
-    usleep(150000000); // sleep 15 seconds
+    printf("sleep for 5 seconds\n");
+    usleep(5000000); // sleep 5s
+    printf("end\n");
 
 #ifdef PIGPIO
     spiClose(spi);
