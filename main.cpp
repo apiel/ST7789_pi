@@ -13,7 +13,7 @@
 #define SPI_Command_Mode 0
 #define SPI_Data_Mode 1
 
-int mode = 0;
+int mode = -1;
 
 // int spiWrite(unsigned handle, char *buf, unsigned count);
 
@@ -109,10 +109,16 @@ int main(int argc, char** argv)
 
 #ifdef PIGPIO
     gpioSetMode(PIN_RESET, PI_OUTPUT);
+    gpioWrite(PIN_RESET, 1);
+    usleep(100000); // sleep 100ms
+    gpioWrite(PIN_RESET, 0);
+    usleep(100000); // sleep 100ms
+    gpioWrite(PIN_RESET, 1);
+    usleep(100000); // sleep 100ms
+
     gpioSetMode(PIN_BACKLIGHT, PI_OUTPUT);
     gpioWrite(PIN_BACKLIGHT, 0);
     gpioSetMode(PIN_DATA_CONTROL, PI_OUTPUT);
-    gpioWrite(PIN_DATA_CONTROL, SPI_Command_Mode);
 #endif
 
     writeCmd(spi, 0x01); // reset
@@ -126,7 +132,6 @@ int main(int argc, char** argv)
     char columnData[4] = { 0x00, 0x00, 0x00, 0x0F };
     writeData(spi, columnData, 4);
 
-    // setCommandMode();
     writeCmd(spi, 0x2B); // set row address
     char rowData[4] = { 0x00, 0x00, 0x00, 0x0F };
     writeData(spi, rowData, 4);
