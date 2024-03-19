@@ -61,6 +61,13 @@ void writeData(int spi, char data)
 
 int main(int argc, char** argv)
 {
+#ifdef PIGPIO
+    if (gpioInitialise() < 0) {
+        fprintf(stderr, "Failed to initialise GPIO\n");
+        return 1;
+    }
+#endif
+
     // initialize SPI
 #ifdef PIGPIO
     int spi = spiOpen(0, 1000000, 0);
@@ -97,8 +104,8 @@ int main(int argc, char** argv)
     char rowData[4] = { 0x00, 0x00, 0x00, 0x0F };
     writeData(spi, rowData, 4);
 
-    writeCmd(spi, 0x21); //Display Inversion On
-    writeCmd(spi, 0x13); //Normal Display Mode On
+    writeCmd(spi, 0x21); // Display Inversion On
+    writeCmd(spi, 0x13); // Normal Display Mode On
     writeCmd(spi, 0x29); // display on
     usleep(255000); // sleep 255ms
 

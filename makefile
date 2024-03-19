@@ -9,4 +9,4 @@ build:
 	g++ -o st7789 main.cpp $(GPIO)
 
 run:
-	./st7789
+	sudo ./st7789
