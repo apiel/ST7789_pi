@@ -75,9 +75,10 @@ int main(int argc, char** argv)
 
 #ifdef PIGPIO
     gpioSetMode(PIN_RESET, PI_OUTPUT);
-    gpioWrite(PIN_DATA_CONTROL, SPI_Command_Mode);
     gpioSetMode(PIN_BACKLIGHT, PI_OUTPUT);
+    gpioWrite(PIN_BACKLIGHT, 0);
     gpioSetMode(PIN_DATA_CONTROL, PI_OUTPUT);
+    gpioWrite(PIN_DATA_CONTROL, SPI_Command_Mode);
 #endif
 
     writeCmd(spi, 0x01); // reset
@@ -99,6 +100,11 @@ int main(int argc, char** argv)
     writeCmd(spi, 0x21); //Display Inversion On
     writeCmd(spi, 0x13); //Normal Display Mode On
     writeCmd(spi, 0x29); // display on
+    usleep(255000); // sleep 255ms
+
+#ifdef PIGPIO
+    gpioWrite(PIN_BACKLIGHT, 1);
+#endif
 
 #ifdef PIGPIO
     spiClose(spi);
