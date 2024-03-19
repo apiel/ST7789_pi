@@ -96,8 +96,8 @@ int main(int argc, char** argv)
 
     // initialize SPI
 #ifdef PIGPIO
-    // int spi = spiOpen(0, 1000000, 0);
-    int spi = spiOpen(1, 1000000, 0);
+    int spi = spiOpen(0, 1000000, 0);
+    // int spi = spiOpen(1, 1000000, 0);
 #else
     int spi = 0;
 #endif
@@ -144,9 +144,9 @@ int main(int argc, char** argv)
 
     // draw some random pixel
     for (int i = 0; i < 100; i++) {
-        int x = rand() % 16;
-        int y = rand() % 16;
-        int color = rand() % 256;
+        int x = rand() % 120;
+        int y = rand() % 120;
+        int color = rand() % 0xFFFFFF;
         drawPixel(spi, x, y, color);
     }
 
