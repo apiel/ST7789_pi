@@ -96,7 +96,8 @@ int main(int argc, char** argv)
 
     // initialize SPI
 #ifdef PIGPIO
-    int spi = spiOpen(0, 1000000, 0);
+    // int spi = spiOpen(0, 1000000, 0);
+    int spi = spiOpen(1, 1000000, 0);
 #else
     int spi = 0;
 #endif
