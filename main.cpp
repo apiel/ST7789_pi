@@ -139,6 +139,8 @@ int main(int argc, char** argv)
     gpioWrite(PIN_BACKLIGHT, 1);
 #endif
 
+    usleep(150000); // sleep 150ms
+
     // draw some random pixel
     for (int i = 0; i < 100; i++) {
         int x = rand() % 16;
