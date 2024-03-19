@@ -5,6 +5,7 @@
 #include <cstdio>
 #include <unistd.h>
 #include <cstdlib>
+#include <cstdint>
 
 #define PIN_RESET 5
 #define PIN_BACKLIGHT 13
@@ -72,13 +73,14 @@ void writeAddr(int spi, int addr1, int addr2)
 
 // }
 
-void drawPixel(int spi, int x, int y, int color)
+void drawPixel(int spi, int x, int y, uint16_t color)
 {
     writeCmd(spi, 0x2A); // set column address
     writeAddr(spi, x, x);
     writeCmd(spi, 0x2B); // set row address
     writeAddr(spi, y, y);
 
+    writeCmd(spi, 0x2C); // memory Write
     char data[2];
     data[0] = (color >> 8) & 0xFF;
     data[1] = color & 0xFF;
@@ -161,7 +163,7 @@ int main(int argc, char** argv)
     for (int i = 0; i < 100; i++) {
         int x = rand() % 120;
         int y = rand() % 120;
-        int color = rand() % 0xFFFFFF;
+        uint16_t color = rand() % 0xFFFFFF;
         drawPixel(spi, x, y, color);
     }
 
