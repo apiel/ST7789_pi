@@ -96,7 +96,8 @@ int main(int argc, char** argv)
 
     // initialize SPI
 #ifdef PIGPIO
-    int spi = spiOpen(0, 1000000, 0);
+    int spi = spiOpen(0, 32000, 0);
+    // int spi = spiOpen(0, 1000000, 0);
     // int spi = spiOpen(1, 1000000, 0);
 #else
     int spi = 0;
@@ -126,19 +127,23 @@ int main(int argc, char** argv)
     writeCmd(spi, 0x11); // sleep out
     usleep(255000); // sleep 255ms
     writeCmd(spi, 0x3A); // set pixel format
-    writeCmd(spi, 0x55); // 16bit
+    // writeCmd(spi, 0x55); // 16bit
+    writeCmd(spi, 0x05); // 16bpp
+    usleep(10000); // sleep 10ms
+
+    writeCmd(spi, 0x36); // set memory address
     usleep(10000); // sleep 10ms
 
     writeCmd(spi, 0x2A); // set column address
     // char columnData[4] = { 0x00, 0x00, 0x00, 128 }; // 240 ???
-    char columnData[4] = { 0x00, 0x00, 240 >> 8, (char)(240 & 0xFF) };
-    // char columnData[4] = { 0x00, 0x00, 240 >> 8, 240 & 127 };
+    char columnData[4] = { 0x00, 0x00, 0x00, (char)240 };
+    // char columnData[4] = { 0x00, 0x00, 240 >> 8, 240 & 0xFF };
     writeData(spi, columnData, 4);
 
     writeCmd(spi, 0x2B); // set row address
     // char rowData[4] = { 0x00, 0x00, 0x00, 128 }; // 240 ???
-    char rowData[4] = { 0x00, 0x00, 240 >> 8, (char)(240 & 0xFF) };
-    // char rowData[4] = { 0x00, 0x00, 240 >> 8, 240 & 127 };
+    char rowData[4] = { 0x00, 0x00, 0x00, (char)240 };
+    // char rowData[4] = { 0x00, 0x00, 240 >> 8, 240 & 0xFF };
     writeData(spi, rowData, 4);
 
     writeCmd(spi, 0x21); // Display Inversion On
