@@ -110,11 +110,11 @@ int main(int argc, char** argv)
 #ifdef PIGPIO
     gpioSetMode(PIN_RESET, PI_OUTPUT);
     gpioWrite(PIN_RESET, 1);
-    usleep(100000); // sleep 100ms
+    usleep(50000); // sleep 50ms
     gpioWrite(PIN_RESET, 0);
-    usleep(100000); // sleep 100ms
+    usleep(50000); // sleep 50ms
     gpioWrite(PIN_RESET, 1);
-    usleep(100000); // sleep 100ms
+    usleep(50000); // sleep 50ms
 
     gpioSetMode(PIN_BACKLIGHT, PI_OUTPUT);
     gpioWrite(PIN_BACKLIGHT, 0);
@@ -127,13 +127,18 @@ int main(int argc, char** argv)
     usleep(255000); // sleep 255ms
     writeCmd(spi, 0x3A); // set pixel format
     writeCmd(spi, 0x55); // 16bit
+    usleep(10000); // sleep 10ms
 
     writeCmd(spi, 0x2A); // set column address
-    char columnData[4] = { 0x00, 0x00, 0x00, 0x0F };
+    // char columnData[4] = { 0x00, 0x00, 0x00, 128 }; // 240 ???
+    char columnData[4] = { 0x00, 0x00, 240 >> 8, (char)(240 & 0xFF) };
+    // char columnData[4] = { 0x00, 0x00, 240 >> 8, 240 & 127 };
     writeData(spi, columnData, 4);
 
     writeCmd(spi, 0x2B); // set row address
-    char rowData[4] = { 0x00, 0x00, 0x00, 0x0F };
+    // char rowData[4] = { 0x00, 0x00, 0x00, 128 }; // 240 ???
+    char rowData[4] = { 0x00, 0x00, 240 >> 8, (char)(240 & 0xFF) };
+    // char rowData[4] = { 0x00, 0x00, 240 >> 8, 240 & 127 };
     writeData(spi, rowData, 4);
 
     writeCmd(spi, 0x21); // Display Inversion On
