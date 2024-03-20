@@ -84,9 +84,9 @@ void writeAddr(int addr1, int addr2)
 void drawPixel(int x, int y, uint16_t color)
 {
     writeCmd(0x2A); // set column address
-    writeAddr(x, x);
+    writeAddr(x, x + 1);
     writeCmd(0x2B); // set row address
-    writeAddr(y, y);
+    writeAddr(y, y + 1);
 
     writeCmd(0x2C); // memory Write
 
@@ -143,24 +143,24 @@ int main(int argc, char** argv)
     sleep(10); // sleep 10ms
 
 //---
-    writeCmd(0xB2); // set column address
-    writeData(0x0C);
-    writeData(0x0C);
+    // writeCmd(0xB2); // set column address
+    // writeData(0x0C);
+    // writeData(0x0C);
 
-    writeCmd(0xB7); // set row address
-    writeData(0x35);
+    // writeCmd(0xB7); // set row address
+    // writeData(0x35);
 
-    writeCmd(0xBB); // set page address
-    writeData(0x1A);
+    // writeCmd(0xBB); // set page address
+    // writeData(0x1A);
 
-    writeCmd(0xC0); // set GRAM write direction
-    writeData(0x2C);
+    // writeCmd(0xC0); // set GRAM write direction
+    // writeData(0x2C);
 
-    writeCmd(0xC2); // set GRAM write direction
-    writeData(0x01);
+    // writeCmd(0xC2); // set GRAM write direction
+    // writeData(0x01);
 
-    writeCmd(0xC3); // set GRAM write direction
-    writeData(0x0B);
+    // writeCmd(0xC3); // set GRAM write direction
+    // writeData(0x0B);
 //---
 
     writeCmd(0x2A); // set column address
