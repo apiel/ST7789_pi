@@ -131,8 +131,8 @@ int main(int argc, char** argv)
 
 #endif
 
-    // writeCmd(0x01); // reset
-    // sleep(150); // sleep 150ms
+    writeCmd(0x01); // reset
+    sleep(150); // sleep 150ms
     writeCmd(0x11); // sleep out
     sleep(255); // sleep 255ms
     writeCmd(0x3A); // set pixel format
