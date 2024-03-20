@@ -174,6 +174,10 @@ int main(int argc, char** argv)
         drawPixel(i, i, 0xFF00);
     }
 
+    printf("sleep for 5 seconds\n");
+    sleep(5000); // sleep 5s
+    printf("end\n");
+
 #ifdef BCM2835
     bcm2835_spi_end();
     bcm2835_close();
