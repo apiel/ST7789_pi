@@ -166,10 +166,12 @@ int main(int argc, char** argv)
 
     // draw some random pixel
     for (int i = 0; i < 100; i++) {
-        int x = rand() % 120;
-        int y = rand() % 120;
-        uint16_t color = 0xFFF000; // rand() % 0xFFFFFF;
-        drawPixel(x, y, color);
+        // int x = rand() % 120;
+        // int y = rand() % 120;
+        // uint16_t color = rand() % 0xFFFFFF;
+        // drawPixel(x, y, color);
+
+        drawPixel(i, i, 0xFF00);
     }
 
 #ifdef BCM2835
