@@ -62,6 +62,40 @@ void sleep(int ms)
 #endif
 }
 
+void writeAddr(int addr1, int addr2)
+{
+    char data[4];
+    data[0] = (addr1 >> 8) & 0xFF;
+    data[1] = addr1 & 0xFF;
+    data[2] = (addr2 >> 8) & 0xFF;
+    data[3] = addr2 & 0xFF;
+    writeData(data, 4);
+}
+
+// void drawFilledRect(int spi, int x, int y, int w, int h, int color)
+// {
+//     writeCmd(0x2A); // set column address
+//     writeAddr(x, x + w - 1);
+//     writeCmd(0x2B); // set row address
+//     writeAddr(y, y + h - 1);
+
+// }
+
+void drawPixel(int x, int y, uint16_t color)
+{
+    writeCmd(0x2A); // set column address
+    writeAddr(x, x);
+    writeCmd(0x2B); // set row address
+    writeAddr(y, y);
+
+    writeCmd(0x2C); // memory Write
+
+    char data[2];
+    data[0] = (color >> 8) & 0xFF;
+    data[1] = color & 0xFF;
+    writeData(data, 2);
+}
+
 int main(int argc, char** argv)
 {
 #ifdef BCM2835
@@ -120,6 +154,16 @@ int main(int argc, char** argv)
 #ifdef BCM2835
     bcm2835_gpio_write(PIN_BACKLIGHT, 1);
 #endif
+
+    sleep(150); // sleep 150ms
+
+    // draw some random pixel
+    for (int i = 0; i < 100; i++) {
+        int x = rand() % 120;
+        int y = rand() % 120;
+        uint16_t color = rand() % 0xFFFFFF;
+        drawPixel(x, y, color);
+    }
 
 #ifdef BCM2835
     bcm2835_spi_end();
