@@ -168,7 +168,7 @@ int main(int argc, char** argv)
     for (int i = 0; i < 100; i++) {
         int x = rand() % 120;
         int y = rand() % 120;
-        uint16_t color = rand() % 0xFFFFFF;
+        uint16_t color = 0xFFF000; // rand() % 0xFFFFFF;
         drawPixel(x, y, color);
     }
 
