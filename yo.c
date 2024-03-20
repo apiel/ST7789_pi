@@ -42,7 +42,8 @@ static void pabort(const char *s)
  * The GPIO pins we're directly manipulating
  */
 enum {
-    DC = 25
+    // DC = 25
+    DC = 6
 } pin;
 
 /*
