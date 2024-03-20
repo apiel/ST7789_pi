@@ -84,9 +84,9 @@ void writeAddr(int addr1, int addr2)
 void drawPixel(int x, int y, uint16_t color)
 {
     writeCmd(0x2A); // set column address
-    writeAddr(x, x + 1);
+    writeAddr(x, x);
     writeCmd(0x2B); // set row address
-    writeAddr(y, y + 1);
+    writeAddr(y, y);
 
     writeCmd(0x2C); // memory Write
 
