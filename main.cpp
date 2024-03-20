@@ -17,7 +17,7 @@
 
 int mode = -1;
 
-void writeMode(int _mode, uint8_t* buf, unsigned count)
+void writeMode(int _mode, const char* buf, unsigned count)
 {
     if (mode != _mode) {
 #ifdef BCM2835
@@ -28,9 +28,7 @@ void writeMode(int _mode, uint8_t* buf, unsigned count)
         mode = _mode;
     }
 #ifdef BCM2835
-    for (int i = 0; i < count; i++) {
-        bcm2835_spi_transfer(buf[i]);
-    }
+    bcm2835_spi_transfern((char*)buf, count);
 #else
     printf("write data: ");
     for (int i = 0; i < count; i++) {
@@ -40,17 +38,17 @@ void writeMode(int _mode, uint8_t* buf, unsigned count)
 #endif
 }
 
-void writeCmd(uint8_t cmd)
+void writeCmd(char cmd)
 {
     writeMode(SPI_Command_Mode, &cmd, 1);
 }
 
-void writeData(uint8_t* data, unsigned count)
+void writeData(const char* data, unsigned count)
 {
     writeMode(SPI_Data_Mode, data, count);
 }
 
-void writeData(uint8_t data)
+void writeData(char data)
 {
     writeData(&data, 1);
 }
@@ -66,7 +64,7 @@ void sleep(int ms)
 
 void writeAddr(int addr1, int addr2)
 {
-    uint8_t data[4];
+    char data[4];
     data[0] = (addr1 >> 8) & 0xFF;
     data[1] = addr1 & 0xFF;
     data[2] = (addr2 >> 8) & 0xFF;
@@ -92,7 +90,7 @@ void drawPixel(int x, int y, uint16_t color)
 
     writeCmd(0x2C); // memory Write
 
-    uint8_t data[2];
+    char data[2];
     data[0] = (color >> 8) & 0xFF;
     data[1] = color & 0xFF;
     writeData(data, 2);
@@ -141,17 +139,39 @@ int main(int argc, char** argv)
     sleep(10); // sleep 10ms
 
     writeCmd(0x36); // set memory address
+    writeData(0x00);
     sleep(10); // sleep 10ms
+
+//---
+    writeCmd(0xB2); // set column address
+    writeData(0x0C);
+    writeData(0x0C);
+
+    writeCmd(0xB7); // set row address
+    writeData(0x35);
+
+    writeCmd(0xBB); // set page address
+    writeData(0x1A);
+
+    writeCmd(0xC0); // set GRAM write direction
+    writeData(0x2C);
+
+    writeCmd(0xC2); // set GRAM write direction
+    writeData(0x01);
+
+    writeCmd(0xC3); // set GRAM write direction
+    writeData(0x0B);
+//---
 
     writeCmd(0x2A); // set column address
     // char columnData[4] = { 0x00, 0x00, 0x00, 128 }; // 240 ???
-    uint8_t columnData[4] = { 0x00, 0x00, 0x00, 240 };
+    char columnData[4] = { 0x00, 0x00, 0x00, (char)240 };
     // char columnData[4] = { 0x00, 0x00, 240 >> 8, 240 & 0xFF };
     writeData(columnData, 4);
 
     writeCmd(0x2B); // set row address
     // char rowData[4] = { 0x00, 0x00, 0x00, 128 }; // 240 ???
-    uint8_t rowData[4] = { 0x00, 0x00, 0x00, 240 };
+    char rowData[4] = { 0x00, 0x00, 0x00, (char)240 };
     // char rowData[4] = { 0x00, 0x00, 240 >> 8, 240 & 0xFF };
     writeData(rowData, 4);
 
