@@ -15,6 +15,53 @@
 #define SPI_Command_Mode 0
 #define SPI_Data_Mode 1
 
+int mode = -1;
+
+void writeMode(int _mode, const char* buf, unsigned count)
+{
+    if (mode != _mode) {
+#ifdef BCM2835
+        bcm2835_gpio_write(PIN_DATA_CONTROL, _mode);
+#else
+        printf("set mode %d\n", _mode);
+#endif
+        mode = _mode;
+    }
+#ifdef BCM2835
+    bcm2835_spi_transfern((char*)buf, count);
+#else
+    printf("write data: ");
+    for (int i = 0; i < count; i++) {
+        printf("%02x ", buf[i]);
+    }
+    printf("\n");
+#endif
+}
+
+void writeCmd(char cmd)
+{
+    writeMode(SPI_Command_Mode, &cmd, 1);
+}
+
+void writeData(const char* data, unsigned count)
+{
+    writeMode(SPI_Data_Mode, data, count);
+}
+
+void writeData(char data)
+{
+    writeData(&data, 1);
+}
+
+void sleep(int ms)
+{
+#ifdef BCM2835
+    bcm2835_delay(ms);
+#else
+    usleep(ms * 1000);
+#endif
+}
+
 int main(int argc, char** argv)
 {
 #ifdef BCM2835
@@ -35,7 +82,43 @@ int main(int argc, char** argv)
     bcm2835_gpio_write(PIN_BACKLIGHT, 0);
     bcm2835_gpio_fsel(PIN_DATA_CONTROL, BCM2835_GPIO_FSEL_OUTP);
 
-    bcm2835_spi_begin();
+    if (!bcm2835_spi_begin()) {
+        fprintf(stderr, "Failed to initialise BCM2835 spi interface.\n");
+        return 1;
+    }
+#endif
+
+    writeCmd(0x01); // reset
+    sleep(150); // sleep 150ms
+    writeCmd(0x11); // sleep out
+    sleep(255); // sleep 255ms
+    writeCmd(0x3A); // set pixel format
+    // writeCmd(0x55); // 16bit
+    writeCmd(0x05); // 16bpp
+    sleep(10); // sleep 10ms
+
+    writeCmd(0x36); // set memory address
+    sleep(10); // sleep 10ms
+
+    writeCmd(0x2A); // set column address
+    // char columnData[4] = { 0x00, 0x00, 0x00, 128 }; // 240 ???
+    char columnData[4] = { 0x00, 0x00, 0x00, (char)240 };
+    // char columnData[4] = { 0x00, 0x00, 240 >> 8, 240 & 0xFF };
+    writeData(columnData, 4);
+
+    writeCmd(0x2B); // set row address
+    // char rowData[4] = { 0x00, 0x00, 0x00, 128 }; // 240 ???
+    char rowData[4] = { 0x00, 0x00, 0x00, (char)240 };
+    // char rowData[4] = { 0x00, 0x00, 240 >> 8, 240 & 0xFF };
+    writeData(rowData, 4);
+
+    writeCmd(0x21); // Display Inversion On
+    writeCmd(0x13); // Normal Display Mode On
+    writeCmd(0x29); // display on
+    sleep(255); // sleep 255ms
+
+#ifdef BCM2835
+    bcm2835_gpio_write(PIN_BACKLIGHT, 1);
 #endif
 
 #ifdef BCM2835
