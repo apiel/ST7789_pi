@@ -127,6 +127,8 @@ int main(int argc, char** argv)
     // bcm2835_spi_chipSelect(BCM2835_SPI_CS0);                      // The default
     // bcm2835_spi_setChipSelectPolarity(BCM2835_SPI_CS0, LOW);      // the default
 
+    bcm2835_spi_setDataMode(BCM2835_SPI_MODE3);
+
 #endif
 
     // writeCmd(0x01); // reset
@@ -142,7 +144,7 @@ int main(int argc, char** argv)
     writeData(0x00);
     sleep(10); // sleep 10ms
 
-//---
+    //---
     // writeCmd(0xB2); // set column address
     // writeData(0x0C);
     // writeData(0x0C);
@@ -161,7 +163,7 @@ int main(int argc, char** argv)
 
     // writeCmd(0xC3); // set GRAM write direction
     // writeData(0x0B);
-//---
+    //---
 
     writeCmd(0x2A); // set column address
     // char columnData[4] = { 0x00, 0x00, 0x00, 128 }; // 240 ???
